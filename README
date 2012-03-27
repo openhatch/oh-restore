@@ -1,0 +1,2 @@
+If you find yourself with a copy of the linode.openhatch.org
+filesystem, or a snapshot of it from rsync.net, use this Makefile.
