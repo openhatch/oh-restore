@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function die() {
-    print "$1"
+    echo "$1"
     exit 1
 }
 
@@ -9,17 +9,18 @@ function die() {
 source restore.conf.sh
 
 # First, make sure we can SSH there
-ssh root@"$RESTORE_IP" /bin/true || die "Can't SSH in."
+ssh root@"$REMOTE_IP" /bin/true || die "Can't SSH in."
 
 # Second, make sure we have all the required data
-[ -f conf ] || die "Can't find configuration files. Ask Asheesh for these."
-[ -f secrets ] die "Can't find authentication secrets. Ash Asheesh for these."
+[[ -d conf ]] || die "Can't find configuration files. Ask Asheesh for these."
+[[ -d secrets ]] || die "Can't find authentication secrets. Ash Asheesh for these."
 
-# Then copy these files there
-ssh root@"$RESTORE_IP" mkdir -p /root/restore
-rsync -avzP . root@"$RESTORE_IP":/root/restore/.
+# Do a restore
+ssh -t root@"$REMOTE_IP" screen 'nohup duplicity --encrypt-key="A5CC321E" restore scp://rsync.net/backups/linode.openhatch.org/all /var/backups/restored ; tail -f nohup.out'
 
-# Then, tell the user what to do
-echo "Now, do:"
-echo "    "ssh root@"$RESTORE_IP"
-echo "create a GNU screen session, cd /root/restore; and run 'make'"
+# Copy these files over
+ssh root@"$REMOTE_IP" mkdir -p /var/backups/restored/restore-scripts
+rsync -avzP . root@"$REMOTE_IP":/var/backups/restored/restore-scripts/.
+
+# Run them
+ssh -t root@"$REMOTE_IP" screen 'chroot /var/backups/restored bash -c "cd /restore-scripts ; make"'
