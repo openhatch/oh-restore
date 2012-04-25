@@ -3,15 +3,17 @@ export DEBIAN_FRONTEND
 
 all: run
 
-/proc:
+slash-proc:
 	mkdir -p /proc
-	mount /proc
+	mount /proc || echo already mounted
 
-/sys:
+slash-sys:
 	mkdir -p /sys
-	mount /sys
+	mount /sys || echo already mounted
 
 udev-start:
+	mkdir -p /dev/pts
+	mount /dev/pts || echo already mounted
 	/etc/init.d/udev restart
 
 google-dns:
@@ -24,7 +26,7 @@ fake-dns:
 	grep -v linode.openhatch.org /etc/hosts | sponge /etc/hosts
 	echo $$(ip  addr | grep 'inet ' | grep -v 'inet 10[.]' | grep -v 'inet 127[.]' | awk '{print $2}' | sed 's,/.*,,' | sed 's/inet //') linode.openhatch.org openhatch.org >> /etc/hosts
 
-system-setup: /proc /sys /tmp udev-start google-dns fake-dns
+system-setup: slash-proc slash-sys /tmp udev-start google-dns fake-dns
 
 restore-database: mysql-install mysql-restore
 
