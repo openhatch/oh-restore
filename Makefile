@@ -25,6 +25,7 @@ google-dns:
 fake-dns:
 	grep -v linode.openhatch.org /etc/hosts | sponge /etc/hosts
 	echo $$(ip  addr | grep 'inet ' | grep -v 'inet 10[.]' | grep -v 'inet 127[.]' | awk '{print $2}' | sed 's,/.*,,' | sed 's/inet //') linode.openhatch.org openhatch.org >> /etc/hosts
+	/etc/init.d/hostname.sh start
 
 system-setup: slash-proc slash-sys /tmp udev-start google-dns fake-dns
 
@@ -43,7 +44,7 @@ mysql-restore:
 	/etc/init.d/mysql stop
 	/usr/bin/mysqld_safe --skip-grant-tables &
 	sleep 4
-	#cd /var/backups/mysql ; for thing in *.sql.gz; do db=$${thing%.sql.gz} ; echo create database $$db | mysql -uroot ; zcat "$$thing" | mysql -uroot $${thing%.sql.gz}; done
+	cd /var/backups/mysql ; for thing in *.sql.gz; do db=$${thing%.sql.gz} ; echo create database $$db | mysql -uroot ; zcat "$$thing" | mysql -uroot $${thing%.sql.gz}; done
 	/usr/bin/mysqladmin shutdown
 	/etc/init.d/mysql restart
 
