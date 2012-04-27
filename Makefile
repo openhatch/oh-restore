@@ -32,9 +32,12 @@ system-setup: slash-proc slash-sys /tmp udev-start google-dns fake-dns
 restore-database: mysql-install mysql-restore
 
 restore-apt:
+	mkdir -p /var/cache/man
+	chmod +t /var/cache/man
 	mkdir -p /var/cache/etckeeper
 	mkdir -p /var/cache/debconf
 	mkdir -p /var/cache/apt/archives/partial
+	mkdir -p /var/lib/apt/lists/partial
 
 mysql-install:
 	apt-get update
