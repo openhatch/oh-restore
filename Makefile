@@ -64,5 +64,7 @@ restore-web: start-apache start-roundup start-nginx
 
 check:
 	echo "import sys; import django.test.client ; c = django.test.client.Client() ; r = c.get('/') ; r.status_code == 200 or sys.exit(1)" | sudo -u deploy -H sh -c 'cd /home/deploy/milestone-a ;  python manage.py shell --plain'
+	wget --header "Host: openhatch.org" -O- 127.0.0.1:81/wiki/Main_Page | grep -q oh_wiki
 
 run: system-setup restore-apt restore-database restore-web check
+
