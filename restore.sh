@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function remote_do() {
-    ssh -t root@"$REMOTE_IP" "$@"
+    ssh -t -t root@"$REMOTE_IP" "$@"
 }
 
 function copy_file() {
@@ -19,7 +19,7 @@ source restore.conf.sh
 # First, make sure we can SSH there
 ssh -o StrictHostKeyChecking=no root@"$REMOTE_IP" /bin/true || die "Can't SSH in."
 
-ssh -t root@"$REMOTE_IP" apt-get -y install screen duplicity rsync bash
+ssh -t -t root@"$REMOTE_IP" apt-get -y install screen duplicity rsync bash
 
 # Second, make sure we have all the required data
 [[ -d conf ]] || die "Can't find configuration files. Ask Asheesh for these."
@@ -39,11 +39,11 @@ remote_do chmod 700 /root/.gnupg
 cat secrets/gpg-secret-key.asc  | remote_do gpg --import
 
 # Do a restore
-ssh -t root@"$REMOTE_IP" PASSPHRASE='' duplicity --encrypt-key="A5CC321E" restore scp://rsync.net/backups/linode.openhatch.org/all /var/backups/restored
+ssh -t -t root@"$REMOTE_IP" PASSPHRASE='' duplicity --encrypt-key="A5CC321E" restore scp://rsync.net/backups/linode.openhatch.org/all /var/backups/restored
 
 # Copy these files over
 ssh root@"$REMOTE_IP" mkdir -p /var/backups/restored/restore-scripts
 rsync -avzP . root@"$REMOTE_IP":/var/backups/restored/restore-scripts/.
 
 # Run them
-ssh -t root@"$REMOTE_IP" chroot /var/backups/restored 'bash -c "cd /restore-scripts ; make"'
+ssh -t -t root@"$REMOTE_IP" chroot /var/backups/restored 'bash -c "cd /restore-scripts ; make"'
