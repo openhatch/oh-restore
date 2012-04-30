@@ -18,6 +18,7 @@ source restore.conf.sh
 
 # First, make sure we can SSH there
 ssh -o StrictHostKeyChecking=no root@"$REMOTE_IP" /bin/true || die "Can't SSH in."
+echo "Logging in to $REMOTE_IP and getting to work."
 
 ssh -t -t root@"$REMOTE_IP" apt-get -y install screen duplicity rsync bash
 
