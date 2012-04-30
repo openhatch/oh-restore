@@ -32,7 +32,7 @@ node = conn.deploy_node(name='oh-restore', image=image, size=size, deploy=sd)
 ip = node.public_ip[0]
 
 OLD_RESTORE_CONF_SH_LINES = open('restore.conf.sh', 'r').readlines()
-NEW_RESTORE_CONF_SH_LINES = [x for x in OLD_RESTORE_CONF_SH_LINES.rstrip()
+NEW_RESTORE_CONF_SH_LINES = [x.rstrip() for x in OLD_RESTORE_CONF_SH_LINES
                              if 'REMOTE_IP=' not in x]
 NEW_RESTORE_CONF_SH_LINES.append('REMOTE_IP="%s"' % (ip,))
 fd = open('restore.conf.sh', 'w')
