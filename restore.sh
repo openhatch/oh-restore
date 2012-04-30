@@ -30,7 +30,7 @@ ssh -t -t root@"$REMOTE_IP" apt-get -y install screen duplicity rsync bash
 remote_do mkdir -p /root/.ssh
 remote_do chmod 700 /root/.ssh
 copy_file conf/known_hosts /root/.ssh/known_hosts
-copy_file conf/ssh_config /root/.ssh/ssh_config
+copy_file conf/ssh_config /root/.ssh/config
 copy_file secrets/ssh-key /root/.ssh/id_rsa
 copy_file secrets/ssh-key.pub /root/.ssh/id_rsa.pub
 remote_do chmod 600 /root/.ssh/'*'
