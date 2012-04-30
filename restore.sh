@@ -37,7 +37,8 @@ remote_do chmod 600 /root/.ssh/'*'
 
 remote_do mkdir -p /root/.gnupg
 remote_do chmod 700 /root/.gnupg
-cat secrets/gpg-secret-key.asc  | remote_do gpg --import
+copy_file secrets/gpg-secret-key.asc /root/.gnupg
+remote_do gpg --import /root/.gnupg/gpg-secret-key.asc
 
 # Do a restore
 ssh -t -t root@"$REMOTE_IP" PASSPHRASE='' duplicity --encrypt-key="A5CC321E" restore scp://rsync.net/backups/linode.openhatch.org/all /var/backups/restored
